@@ -1,0 +1,28 @@
+/**
+ * Todo entity.
+ * @author Chomnoue team.
+ */
+entity Todo {
+	title String,
+	dueDate Instant,
+    priority Integer,
+    completed Boolean
+}
+
+relationship ManyToOne {
+	Todo{user} to User
+}
+
+
+// Set pagination options
+paginate Todo with pagination
+
+// Use Data Transfert Objects (DTO)
+// dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceClass
+
+// Set an angular suffix
+// angularSuffix * with mySuffix
+

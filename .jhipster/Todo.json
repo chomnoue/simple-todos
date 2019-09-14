@@ -1,0 +1,40 @@
+{
+    "name": "Todo",
+    "fields": [
+        {
+            "fieldName": "title",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "dueDate",
+            "fieldType": "Instant"
+        },
+        {
+            "fieldName": "priority",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "completed",
+            "fieldType": "Boolean"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "todo",
+            "relationshipName": "user",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20190914223525",
+    "javadoc": "Todo entity.\\n@author Chomnoue team.",
+    "entityTableName": "todo",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceClass",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

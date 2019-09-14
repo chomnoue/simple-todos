@@ -42,6 +42,7 @@ public class CacheConfiguration {
             createCache(cm, com.chomnoue.simpletodo.domain.User.class.getName());
             createCache(cm, com.chomnoue.simpletodo.domain.Authority.class.getName());
             createCache(cm, com.chomnoue.simpletodo.domain.User.class.getName() + ".authorities");
+            createCache(cm, com.chomnoue.simpletodo.domain.Todo.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }
