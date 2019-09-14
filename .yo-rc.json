@@ -1,0 +1,39 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.chomnoue.simpletodo"
+    },
+    "jhipsterVersion": "6.3.0",
+    "applicationType": "monolith",
+    "baseName": "simpletodo",
+    "packageName": "com.chomnoue.simpletodo",
+    "packageFolder": "com/chomnoue/simpletodo",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "prodDatabaseType": "postgresql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "gradle",
+    "enableSwaggerCodegen": true,
+    "jwtSecretKey": "MDZiZTgyMmU2ODRkMzcwZWM1MmQzYWE4MTQ1Nzc4NWYwMmYzMzFmMWE0YzAwZWIxOTkwN2MwZjJlOTBlMDIzM2IxM2JlY2I4NjM1MTFlMzY0MDM3NWI3Njg4Mjk0NzFlZTViNTY1MDI4ZmE5ODAzMDEyMWNmODQ2NGJkY2QzNDA=",
+    "embeddableLaunchScript": false,
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "clientFramework": "angularX",
+    "clientTheme": "cerulean",
+    "clientThemeVariant": "primary",
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": false,
+    "blueprints": []
+  }
+}
