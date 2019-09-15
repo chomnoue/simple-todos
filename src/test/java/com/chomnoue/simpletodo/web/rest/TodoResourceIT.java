@@ -1,11 +1,25 @@
 package com.chomnoue.simpletodo.web.rest;
 
+import static com.chomnoue.simpletodo.web.rest.TestUtil.createFormattingConversionService;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.chomnoue.simpletodo.SimpletodoApp;
 import com.chomnoue.simpletodo.domain.Todo;
 import com.chomnoue.simpletodo.repository.TodoRepository;
 import com.chomnoue.simpletodo.service.TodoService;
 import com.chomnoue.simpletodo.web.rest.errors.ExceptionTranslator;
-
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -18,17 +32,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
-
-import javax.persistence.EntityManager;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-
-import static com.chomnoue.simpletodo.web.rest.TestUtil.createFormattingConversionService;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Integration tests for the {@link TodoResource} REST controller.
@@ -43,12 +46,16 @@ public class TodoResourceIT {
     private static final Instant UPDATED_DUE_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
     private static final Instant SMALLER_DUE_DATE = Instant.ofEpochMilli(-1L);
 
-    private static final Integer DEFAULT_PRIORITY = 1;
-    private static final Integer UPDATED_PRIORITY = 2;
-    private static final Integer SMALLER_PRIORITY = 1 - 1;
+    private static final Integer DEFAULT_PRIORITY = 0;
+    private static final Integer UPDATED_PRIORITY = 1;
+    private static final Integer SMALLER_PRIORITY = 0 - 1;
 
     private static final Boolean DEFAULT_COMPLETED = false;
     private static final Boolean UPDATED_COMPLETED = true;
+
+    private static final Long DEFAULT_USER_ID = 1L;
+    private static final Long UPDATED_USER_ID = 2L;
+    private static final Long SMALLER_USER_ID = 1L - 1L;
 
     @Autowired
     private TodoRepository todoRepository;
@@ -80,7 +87,7 @@ public class TodoResourceIT {
         MockitoAnnotations.initMocks(this);
         final TodoResource todoResource = new TodoResource(todoService);
         this.restTodoMockMvc = MockMvcBuilders.standaloneSetup(todoResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setCustomArgumentResolvers(pageableArgumentResolver, new TestAuthenticationPrincipalArgumentResolver())
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter)
@@ -89,30 +96,33 @@ public class TodoResourceIT {
 
     /**
      * Create an entity for this test.
-     *
-     * This is a static method, as tests for other entities might also need it,
-     * if they test an entity which requires the current entity.
+     * <p>
+     * This is a static method, as tests for other entities might also need it, if they test an entity which requires
+     * the current entity.
      */
     public static Todo createEntity(EntityManager em) {
         Todo todo = new Todo()
             .title(DEFAULT_TITLE)
             .dueDate(DEFAULT_DUE_DATE)
             .priority(DEFAULT_PRIORITY)
-            .completed(DEFAULT_COMPLETED);
+            .completed(DEFAULT_COMPLETED)
+            .userId(DEFAULT_USER_ID);
         return todo;
     }
+
     /**
      * Create an updated entity for this test.
-     *
-     * This is a static method, as tests for other entities might also need it,
-     * if they test an entity which requires the current entity.
+     * <p>
+     * This is a static method, as tests for other entities might also need it, if they test an entity which requires
+     * the current entity.
      */
     public static Todo createUpdatedEntity(EntityManager em) {
         Todo todo = new Todo()
             .title(UPDATED_TITLE)
             .dueDate(UPDATED_DUE_DATE)
             .priority(UPDATED_PRIORITY)
-            .completed(UPDATED_COMPLETED);
+            .completed(UPDATED_COMPLETED)
+            .userId(UPDATED_USER_ID);
         return todo;
     }
 
@@ -140,6 +150,7 @@ public class TodoResourceIT {
         assertThat(testTodo.getDueDate()).isEqualTo(DEFAULT_DUE_DATE);
         assertThat(testTodo.getPriority()).isEqualTo(DEFAULT_PRIORITY);
         assertThat(testTodo.isCompleted()).isEqualTo(DEFAULT_COMPLETED);
+        assertThat(testTodo.getUserId()).isEqualTo(DEFAULT_USER_ID);
     }
 
     @Test
@@ -164,6 +175,96 @@ public class TodoResourceIT {
 
     @Test
     @Transactional
+    public void checkTitleIsRequired() throws Exception {
+        int databaseSizeBeforeTest = todoRepository.findAll().size();
+        // set the field null
+        todo.setTitle(null);
+
+        // Create the Todo, which fails.
+
+        restTodoMockMvc.perform(post("/api/todos")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(todo)))
+            .andExpect(status().isBadRequest());
+
+        List<Todo> todoList = todoRepository.findAll();
+        assertThat(todoList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkDueDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = todoRepository.findAll().size();
+        // set the field null
+        todo.setDueDate(null);
+
+        // Create the Todo, which fails.
+
+        restTodoMockMvc.perform(post("/api/todos")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(todo)))
+            .andExpect(status().isBadRequest());
+
+        List<Todo> todoList = todoRepository.findAll();
+        assertThat(todoList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkPriorityIsRequired() throws Exception {
+        int databaseSizeBeforeTest = todoRepository.findAll().size();
+        // set the field null
+        todo.setPriority(null);
+
+        // Create the Todo, which fails.
+
+        restTodoMockMvc.perform(post("/api/todos")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(todo)))
+            .andExpect(status().isBadRequest());
+
+        List<Todo> todoList = todoRepository.findAll();
+        assertThat(todoList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkCompletedIsRequired() throws Exception {
+        int databaseSizeBeforeTest = todoRepository.findAll().size();
+        // set the field null
+        todo.setCompleted(null);
+
+        // Create the Todo, which fails.
+
+        restTodoMockMvc.perform(post("/api/todos")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(todo)))
+            .andExpect(status().isBadRequest());
+
+        List<Todo> todoList = todoRepository.findAll();
+        assertThat(todoList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkUserIdIsRequired() throws Exception {
+        int databaseSizeBeforeTest = todoRepository.findAll().size();
+        // set the field null
+        todo.setUserId(null);
+
+        // Create the Todo, which fails.
+
+        restTodoMockMvc.perform(post("/api/todos")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(todo)))
+            .andExpect(status().isBadRequest());
+
+        List<Todo> todoList = todoRepository.findAll();
+        assertThat(todoList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllTodos() throws Exception {
         // Initialize the database
         todoRepository.saveAndFlush(todo);
@@ -176,9 +277,10 @@ public class TodoResourceIT {
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE.toString())))
             .andExpect(jsonPath("$.[*].dueDate").value(hasItem(DEFAULT_DUE_DATE.toString())))
             .andExpect(jsonPath("$.[*].priority").value(hasItem(DEFAULT_PRIORITY)))
-            .andExpect(jsonPath("$.[*].completed").value(hasItem(DEFAULT_COMPLETED.booleanValue())));
+            .andExpect(jsonPath("$.[*].completed").value(hasItem(DEFAULT_COMPLETED.booleanValue())))
+            .andExpect(jsonPath("$.[*].userId").value(hasItem(DEFAULT_USER_ID.intValue())));
     }
-    
+
     @Test
     @Transactional
     public void getTodo() throws Exception {
@@ -193,7 +295,8 @@ public class TodoResourceIT {
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE.toString()))
             .andExpect(jsonPath("$.dueDate").value(DEFAULT_DUE_DATE.toString()))
             .andExpect(jsonPath("$.priority").value(DEFAULT_PRIORITY))
-            .andExpect(jsonPath("$.completed").value(DEFAULT_COMPLETED.booleanValue()));
+            .andExpect(jsonPath("$.completed").value(DEFAULT_COMPLETED.booleanValue()))
+            .andExpect(jsonPath("$.userId").value(DEFAULT_USER_ID.intValue()));
     }
 
     @Test
@@ -220,7 +323,8 @@ public class TodoResourceIT {
             .title(UPDATED_TITLE)
             .dueDate(UPDATED_DUE_DATE)
             .priority(UPDATED_PRIORITY)
-            .completed(UPDATED_COMPLETED);
+            .completed(UPDATED_COMPLETED)
+            .userId(UPDATED_USER_ID);
 
         restTodoMockMvc.perform(put("/api/todos")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -235,6 +339,7 @@ public class TodoResourceIT {
         assertThat(testTodo.getDueDate()).isEqualTo(UPDATED_DUE_DATE);
         assertThat(testTodo.getPriority()).isEqualTo(UPDATED_PRIORITY);
         assertThat(testTodo.isCompleted()).isEqualTo(UPDATED_COMPLETED);
+        assertThat(testTodo.getUserId()).isEqualTo(DEFAULT_USER_ID);
     }
 
     @Test

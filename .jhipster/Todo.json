@@ -3,30 +3,43 @@
     "fields": [
         {
             "fieldName": "title",
-            "fieldType": "String"
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
         },
         {
             "fieldName": "dueDate",
-            "fieldType": "Instant"
+            "fieldType": "Instant",
+            "fieldValidateRules": [
+                "required"
+            ]
         },
         {
             "fieldName": "priority",
-            "fieldType": "Integer"
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required",
+                "min"
+            ],
+            "fieldValidateRulesMin": 0
         },
         {
             "fieldName": "completed",
-            "fieldType": "Boolean"
-        }
-    ],
-    "relationships": [
+            "fieldType": "Boolean",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
         {
-            "relationshipType": "many-to-one",
-            "otherEntityName": "user",
-            "otherEntityRelationshipName": "todo",
-            "relationshipName": "user",
-            "otherEntityField": "id"
+            "fieldName": "userId",
+            "fieldType": "Long",
+            "fieldValidateRules": [
+                "required"
+            ]
         }
     ],
+    "relationships": [],
     "changelogDate": "20190914223525",
     "javadoc": "Todo entity.\\n@author Chomnoue team.",
     "entityTableName": "todo",

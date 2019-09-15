@@ -1,10 +1,10 @@
 package com.chomnoue.simpletodo.domain;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -25,21 +25,26 @@ public class Todo implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
-    @Column(name = "title")
+    @NotNull
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "due_date")
+    @NotNull
+    @Column(name = "due_date", nullable = false)
     private Instant dueDate;
 
-    @Column(name = "priority")
+    @NotNull
+    @Min(value = 0)
+    @Column(name = "priority", nullable = false)
     private Integer priority;
 
-    @Column(name = "completed")
+    @NotNull
+    @Column(name = "completed", nullable = false)
     private Boolean completed;
 
-    @ManyToOne
-    @JsonIgnoreProperties("todos")
-    private User user;
+    @NotNull
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -102,17 +107,17 @@ public class Todo implements Serializable {
         this.completed = completed;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public Todo user(User user) {
-        this.user = user;
+    public Todo userId(Long userId) {
+        this.userId = userId;
         return this;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
@@ -140,6 +145,7 @@ public class Todo implements Serializable {
             ", dueDate='" + getDueDate() + "'" +
             ", priority=" + getPriority() +
             ", completed='" + isCompleted() + "'" +
+            ", userId=" + getUserId() +
             "}";
     }
 }

@@ -22,7 +22,6 @@
             <th jhiSortBy="dueDate"><span>Due Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="priority"><span>Priority</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="completed"><span>Completed</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="user.id"><span>User</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -33,9 +32,6 @@
                 <td>{{todo.dueDate | date:'medium'}}</td>
                 <td>{{todo.priority}}</td>
                 <td>{{todo.completed}}</td>
-                <td>
-                    {{todo.user?.id}}
-                </td>
                 <td class="text-right">
                     <div class="btn-group">
                         <button type="submit"

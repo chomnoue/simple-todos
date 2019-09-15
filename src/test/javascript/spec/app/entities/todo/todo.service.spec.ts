@@ -24,7 +24,7 @@ describe('Service Tests', () => {
       httpMock = injector.get(HttpTestingController);
       currentDate = moment();
 
-      elemDefault = new Todo(0, 'AAAAAAA', currentDate, 0, false);
+      elemDefault = new Todo(0, 'AAAAAAA', currentDate, 0, false, 0);
     });
 
     describe('Service methods', () => {
@@ -74,7 +74,8 @@ describe('Service Tests', () => {
             title: 'BBBBBB',
             dueDate: currentDate.format(DATE_TIME_FORMAT),
             priority: 1,
-            completed: true
+            completed: true,
+            userId: 1
           },
           elemDefault
         );
@@ -100,7 +101,8 @@ describe('Service Tests', () => {
             title: 'BBBBBB',
             dueDate: currentDate.format(DATE_TIME_FORMAT),
             priority: 1,
-            completed: true
+            completed: true,
+            userId: 1
           },
           elemDefault
         );

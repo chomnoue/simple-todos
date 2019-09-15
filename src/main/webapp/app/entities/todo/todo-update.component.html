@@ -13,31 +13,60 @@
                     <label class="form-control-label" for="field_title">Title</label>
                     <input type="text" class="form-control" name="title" id="field_title"
                            formControlName="title"/>
+                    <div *ngIf="editForm.get('title').invalid && (editForm.get('title').dirty || editForm.get('title').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('title').errors.required">
+                        This field is required.
+                        </small>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="field_dueDate">Due Date</label>
                     <div class="d-flex">
                         <input id="field_dueDate" type="datetime-local" class="form-control" name="dueDate" formControlName="dueDate" placeholder="YYYY-MM-DD HH:mm"/>
                     </div>
+                    <div *ngIf="editForm.get('dueDate').invalid && (editForm.get('dueDate').dirty || editForm.get('dueDate').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('dueDate').errors.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('dueDate').errors?.ZonedDateTimelocal">
+                            This field should be a date and time.
+                        </small>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="field_priority">Priority</label>
                     <input type="number" class="form-control" name="priority" id="field_priority"
                            formControlName="priority"/>
+                    <div *ngIf="editForm.get('priority').invalid && (editForm.get('priority').dirty || editForm.get('priority').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('priority').errors.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('priority').errors.min">
+                            This field should be at least 0.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('priority')?.errors?.number">
+                            This field should be a number.
+                        </small>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="field_completed">Completed</label>
                     <input type="checkbox" class="form-control" name="completed" id="field_completed"
                            formControlName="completed"/>
+                    <div *ngIf="editForm.get('completed').invalid && (editForm.get('completed').dirty || editForm.get('completed').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('completed').errors.required">
+                        This field is required.
+                        </small>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-control-label" for="field_user">User</label>
-                    <select class="form-control" id="field_user" name="user" formControlName="user">
-                        <option [ngValue]="null"></option>
-                        <option [ngValue]="userOption.id === editForm.get('user').value?.id ? editForm.get('user').value : userOption" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.id}}</option>
-                    </select>
-                </div>
             </div>
             <div>
                 <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">

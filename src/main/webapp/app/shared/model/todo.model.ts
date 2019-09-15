@@ -1,5 +1,4 @@
 import { Moment } from 'moment';
-import { IUser } from 'app/core/user/user.model';
 
 export interface ITodo {
   id?: number;
@@ -7,7 +6,7 @@ export interface ITodo {
   dueDate?: Moment;
   priority?: number;
   completed?: boolean;
-  user?: IUser;
+  userId?: number;
 }
 
 export class Todo implements ITodo {
@@ -17,7 +16,7 @@ export class Todo implements ITodo {
     public dueDate?: Moment,
     public priority?: number,
     public completed?: boolean,
-    public user?: IUser
+    public userId?: number
   ) {
     this.completed = this.completed || false;
   }

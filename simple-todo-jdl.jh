@@ -3,16 +3,16 @@
  * @author Chomnoue team.
  */
 entity Todo {
-	title String,
-	dueDate Instant,
-    priority Integer,
-    completed Boolean
+	title String required,
+	dueDate Instant required,
+    priority Integer required min(0),
+    completed Boolean required,
+    userId Long required
 }
 
-relationship ManyToOne {
-	Todo{user} to User
-}
-
+//relationship ManyToOne {
+//	Todo{user} to User
+//}
 
 // Set pagination options
 paginate Todo with pagination

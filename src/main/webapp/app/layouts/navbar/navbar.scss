@@ -1,5 +1,5 @@
 @import '~bootstrap/scss/functions';
-@import '~bootswatch/dist/cerulean/variables';
+@import '~bootswatch/dist/litera/variables';
 @import '~bootstrap/scss/variables';
 
 /* ==========================================================================
@@ -7,6 +7,11 @@ Navbar
 ========================================================================== */
 
 .navbar-version {
+  font-size: 0.65em;
+  color: $navbar-dark-color;
+}
+
+.navbar-title {
   font-size: 0.65em;
   color: $navbar-dark-color;
 }
@@ -32,6 +37,7 @@ Navbar
 
   a.nav-link {
     font-weight: 400;
+    color: $navbar-dark-color;
   }
 
   .navbar-toggler {
