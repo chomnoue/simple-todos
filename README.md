@@ -1,5 +1,5 @@
 # simpletodo
-
+Simmple application to manage your todos
 This application was generated using JHipster 6.3.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v6.3.0](https://www.jhipster.tech/documentation-archive/v6.3.0).
 
 ## Development
