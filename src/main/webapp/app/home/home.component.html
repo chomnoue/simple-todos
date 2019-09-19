@@ -9,13 +9,13 @@
         <div [ngSwitch]="isAuthenticated()">
             <div class="alert alert-success" *ngSwitchCase="true">
                 <span id="home-logged-message" *ngIf="account"
-                   > You are logged in as user "{{account.login}}". Please click on Entities -> Todos to start
+                > You are logged in as user "{{account.login}}". Please click on <a href="/todo">Entities ->
+                    Todos</a> to start
                     managing your tasks
                 </span>
             </div>
 
             <div class="alert alert-warning" *ngSwitchCase="false">
-                <span>If you want to </span>
                 <a class="alert-link" (click)="login()">Click here to sign in</a>
             </div>
             <div class="alert alert-warning" *ngSwitchCase="false">

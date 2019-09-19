@@ -34,6 +34,8 @@
     "dtoSuffix": "DTO",
     "otherModules": [],
     "enableTranslation": false,
-    "blueprints": []
+    "blueprints": [],
+    "herokuAppName": "chomnoue-simpletodo",
+    "herokuDeployType": "jar"
   }
 }

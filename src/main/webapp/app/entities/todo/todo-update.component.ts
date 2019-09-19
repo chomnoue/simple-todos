@@ -51,6 +51,7 @@ export class TodoUpdateComponent implements OnInit {
   save() {
     this.isSaving = true;
     const todo = this.createFromForm();
+
     if (todo.id !== undefined) {
       this.subscribeToSaveResponse(this.todoService.update(todo));
     } else {
@@ -65,7 +66,8 @@ export class TodoUpdateComponent implements OnInit {
       title: this.editForm.get(['title']).value,
       dueDate: this.editForm.get(['dueDate']).value != null ? moment(this.editForm.get(['dueDate']).value, DATE_TIME_FORMAT) : undefined,
       priority: this.editForm.get(['priority']).value,
-      completed: this.editForm.get(['completed']).value
+      completed: this.editForm.get(['completed']).value,
+      userId: -1
     };
   }
 
